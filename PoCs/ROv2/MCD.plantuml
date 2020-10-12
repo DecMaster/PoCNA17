@@ -1,0 +1,77 @@
+@startuml
+
+class Groupe{
+    thème : chaîne {key}
+    description : chaîne
+    compterMessages() : entier
+}
+
+abstract class Utilisateur{
+    mail : chaîne {key}
+    resume : chaîne
+    dateInscription : date
+    {field}nationalité : chaîne(2)
+    photo : chaîne
+}
+
+class Personne{
+    pseudo : chaîne {key}
+    nom : chaine
+    prenom : chaîne
+    dateNaiss : date
+    {field} sexe : genre
+    employeur : chaîne
+    competences[0..*] : chaîne
+}
+
+class Entreprise{
+    raisonSociale : chaine {key}
+    adresse : chaine
+    dateCréation : date
+    siteWeb : chaîne
+    catégorie : categorie
+}
+
+class Adresse{
+    num : string
+    rue : string
+    codePostal : string
+    pays : string
+}
+
+note bottom of Utilisateur
+Un Utilisateur est soit une Personne,
+soit une Entreprise.
+end note
+
+class Message {
+    datePublication : date
+    contenu : chaîne
+}
+
+package "Enumerations" <<frame>> {
+    enum categorie <<enumeration>> {
+        MIC
+        PME
+        ETI
+        GE
+    }
+
+    enum genre <<enumeration>>{
+        Homme
+        Femme
+        Autre
+    }
+}
+
+
+
+Personne --|> Utilisateur
+Entreprise --|> Utilisateur
+
+Groupe *-- "*" Message
+Adresse "1" -* Entreprise
+Groupe "*" -- "*" Utilisateur : < rejoint
+Utilisateur "1" -- "*" "Message" : > écrit
+
+@enduml

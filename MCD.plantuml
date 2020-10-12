@@ -1,0 +1,124 @@
+@startuml
+abstract class Utilisateur{
+    mail : chaîne {key}
+    resume : chaîne
+    dateInscription : date
+    {field}nationalité : chaîne(2)
+    photo : chaîne
+}
+
+class Personne{
+    pseudo : chaîne {key}
+    nom : chaine
+    prenom : chaîne
+    dateNaiss : date
+    {field} sexe : genre
+    employeur : chaîne
+}
+
+class Diplome{
+    intitule : chaîne {key}
+}
+
+class Entreprise{
+    raisonSociale : chaine {key}
+    adresse : chaîne
+    dateCréation : date
+    siteWeb : chaîne
+    catégorie : categorie
+}
+
+class Domaine {
+    nom : chaîne {key}
+}
+
+class Lien {
+    relation : affinité {local key}
+}
+
+class Groupe{
+    thème : chaîne {key}
+    description : chaîne
+    CompterEffectif() : integer
+    CompterNbMessage() : integer
+}
+
+class SousGroupe{
+
+}
+
+class Message {
+    datePublication : date
+    contenu : chaîne
+}
+
+class Fichier{
+    nom : chaîne {local key}
+    contenu : chaîne
+}
+
+class Dossier{
+    nom : chaîne {key}
+}
+
+class Formation{
+    nom : chaîne {key}
+}
+
+class Former{
+    dateDébut : date
+    dateFin : date
+}
+
+class Competence{
+    nom : chaîne {key}
+}
+
+package "Enumeration (chaînes)" <<frame>> {
+    enum categorie <<enumeration>> {
+        MIC
+        PME
+        ETI
+        GE
+    }
+
+    enum genre <<enumeration>>{
+        Homme
+        Femme
+        Autre
+    }
+
+    enum affinité <<enumeration>>{
+        amis
+        collegues
+        connaissances
+    }
+}
+note "Contrainte : \nUne même personne ne \npeut entretenir de lien \navec elle-même" as Note_Lien
+note  "Un Utilisateur ne peut écrire\nun message dans un groupe\nque s'il l'a rejoint avant." as Note_Contrainte
+
+Note_Lien .. Lien
+Note_Contrainte .. Message
+
+Personne "*" -- "*" Personne  : entretient >
+(Personne,Personne) .. Lien
+Groupe  *-- "*" Message : appartient <
+Utilisateur "*" -- "*" Groupe : rejoint >
+Message "*" - "1" Utilisateur : est écrit par >
+Groupe "1" o-- "*" SousGroupe : contient >
+Formation "*" -- "1.." Personne : a suivi <
+(Formation,Personne) .. Former
+Competence "*" -- "1.." Personne : possède <
+Message *-- "*" Fichier : contient >
+Dossier "*" - "1" Utilisateur : possède <
+Dossier "*" -- "*" Message : contient >
+Personne "*" -- "*" Domaine : s'intéresse à >
+Entreprise "*" -- "1.." Domaine : spécialisée dans >
+Personne "1.." - "*" Diplome : détient >
+
+Groupe <|-- SousGroupe
+Utilisateur <|-- Personne
+Utilisateur <|-- Entreprise
+
+
+@enduml

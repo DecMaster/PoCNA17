@@ -1,0 +1,76 @@
+@startuml
+
+class Groupe{
+    thème : chaîne
+    description : chaîne
+}
+enum relation <<enumeration>>{ 
+    amis
+    collegues
+    connaissances
+}
+abstract class Utilisateur{
+    mail : chaîne {key}
+    resume : chaîne
+    dateInscription : date
+    {field}nationalité : chaîne(2)
+    photo : chaîne
+}
+class Lien{
+    type : relation
+}
+class Personne{
+    pseudo : chaîne {key}
+    nom : chaine
+    prenom : chaîne
+    dateNaiss : date
+    {field} sexe : genre
+    employeur : chaîne
+}
+
+class Entreprise{
+    raisonSociale : chaine {key}
+    adresse : chaîne
+    dateCréation : date
+    siteWeb : chaîne
+    catégorie : categorie
+}
+
+note right of Utilisateur
+Un Utilisateur est soit une Personne,
+soit une Entreprise.
+end note
+
+class Message {
+    datePublication : date
+    contenu : chaîne
+}
+
+
+
+Personne --|> Utilisateur
+Entreprise --|> Utilisateur
+Personne "*" -- "*" Personne : entretient >
+(Personne,Personne) . Lien 
+
+Groupe "1" -- "*" Groupe : parente <
+note on link : Lors de l'implementation,\nle noeud du côté de la flèche\nest le noeud enfant.
+Utilisateur "*" -- "*" Groupe : publie >
+(Utilisateur,Groupe) .. Message
+
+note "pseudo et raisonSociale seront appelés\n**name** lors de l'implémentation pour\nqu'ils s'affichent sur les noeuds." as N1
+
+note bottom of Lien 
+Contrainte :
+Une même personne ne
+peut entretenir de lien
+avec elle-même
+end note
+
+note "thème sera appelé **name**\ndurant l'implementation pour\nqu'ils s'affichent sur les noeuds." as N3
+
+
+N3 . Groupe
+N1 .. Entreprise
+N1 .. Personne
+@enduml
